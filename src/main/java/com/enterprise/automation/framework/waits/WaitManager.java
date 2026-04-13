@@ -8,6 +8,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Central wait utility class for explicit waits.
@@ -18,6 +20,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * </p>
  */
 public final class WaitManager {
+
+    private static final Logger log = LoggerFactory.getLogger(WaitManager.class);
 
     private WaitManager() {
         // Prevent instantiation
@@ -30,6 +34,7 @@ public final class WaitManager {
      * @return visible WebElement
      */
     public static WebElement waitForVisibility(By locator) {
+        log.debug("Waiting for visibility of: {}", locator);
         return getWait().until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
@@ -40,6 +45,7 @@ public final class WaitManager {
      * @return clickable WebElement
      */
     public static WebElement waitForElementToBeClickable(By locator) {
+        log.debug("Waiting for element to be clickable: {}", locator);
         return getWait().until(ExpectedConditions.elementToBeClickable(locator));
     }
 
@@ -50,6 +56,7 @@ public final class WaitManager {
      * @return present WebElement
      */
     public static WebElement waitForPresence(By locator) {
+        log.debug("Waiting for presence of: {}", locator);
         return getWait().until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
@@ -60,6 +67,7 @@ public final class WaitManager {
      * @return true if the element becomes invisible, otherwise false
      */
     public static boolean waitForInvisibility(By locator) {
+        log.debug("Waiting for invisibility of: {}", locator);
         return getWait().until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
@@ -70,6 +78,7 @@ public final class WaitManager {
      * @return true if title contains expected text
      */
     public static boolean waitForTitleContains(String titleText) {
+        log.debug("Waiting for title to contain: '{}'", titleText);
         return getWait().until(ExpectedConditions.titleContains(titleText));
     }
 

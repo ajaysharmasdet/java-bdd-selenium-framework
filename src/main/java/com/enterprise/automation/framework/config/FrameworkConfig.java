@@ -1,6 +1,9 @@
 package com.enterprise.automation.framework.config;
 
 import com.enterprise.automation.framework.utils.PropertyUtils;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Central configuration class for framework-level properties.
@@ -15,6 +18,8 @@ import com.enterprise.automation.framework.utils.PropertyUtils;
  * mvn clean test -Dbrowser=firefox -Dheadless=true
  */
 public final class FrameworkConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(FrameworkConfig.class);
 
     private static final String CONFIG_FILE = "config/framework-config.properties";
 
@@ -85,12 +90,15 @@ public final class FrameworkConfig {
      * @param key property key
      * @return property value if found
      */
-    private static java.util.Optional<String> getPropertyWithOverride(String key) {
+    private static Optional<String> getPropertyWithOverride(String key) {
         String systemValue = System.getProperty(key);
         if (systemValue != null && !systemValue.isBlank()) {
-            return java.util.Optional.of(systemValue);
+            log.debug("Config [{}] resolved from system property: {}", key, systemValue);
+            return Optional.of(systemValue);
         }
 
-        return PropertyUtils.getProperty(CONFIG_FILE, key);
+        Optional<String> fileValue = PropertyUtils.getProperty(CONFIG_FILE, key);
+        fileValue.ifPresent(v -> log.debug("Config [{}] resolved from file ({}): {}", key, CONFIG_FILE, v));
+        return fileValue;
     }
 }

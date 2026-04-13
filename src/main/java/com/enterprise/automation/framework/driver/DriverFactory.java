@@ -9,6 +9,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory class responsible for creating, storing, and cleaning up WebDriver
@@ -22,6 +24,8 @@ import org.openqa.selenium.firefox.FirefoxOptions;
  * </p>
  */
 public final class DriverFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(DriverFactory.class);
 
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
 
@@ -39,6 +43,8 @@ public final class DriverFactory {
         }
 
         String browser = System.getProperty("browser", FrameworkConfig.getBrowser()).trim().toLowerCase();
+        log.info("Initializing {} browser on thread [{}]", browser, Thread.currentThread().getName());
+
         WebDriver webDriver = createDriver(browser);
 
         webDriver.manage().window().maximize();
@@ -46,6 +52,7 @@ public final class DriverFactory {
                 .pageLoadTimeout(Duration.ofSeconds(FrameworkConfig.getPageLoadTimeoutSeconds()));
 
         DRIVER.set(webDriver);
+        log.info("WebDriver initialized successfully on thread [{}]", Thread.currentThread().getName());
     }
 
     /**
@@ -69,8 +76,10 @@ public final class DriverFactory {
     public static void quitDriver() {
         WebDriver webDriver = DRIVER.get();
         if (webDriver != null) {
+            log.info("Quitting WebDriver on thread [{}]", Thread.currentThread().getName());
             webDriver.quit();
             DRIVER.remove();
+            log.info("WebDriver quit and removed from thread [{}]", Thread.currentThread().getName());
         }
     }
 

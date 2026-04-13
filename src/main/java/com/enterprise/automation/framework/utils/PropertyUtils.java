@@ -2,8 +2,10 @@ package com.enterprise.automation.framework.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utility class for reading property values from files available in the
@@ -14,8 +16,15 @@ import java.util.Properties;
  * src/main/resources
  * and returns requested keys in a safe Optional form.
  * </p>
+ *
+ * <p>
+ * Each file is loaded at most once per JVM run; subsequent calls return the
+ * cached Properties instance.
+ * </p>
  */
 public final class PropertyUtils {
+
+    private static final Map<String, Properties> CACHE = new ConcurrentHashMap<>();
 
     private PropertyUtils() {
         // Prevent instantiation
@@ -36,12 +45,23 @@ public final class PropertyUtils {
     }
 
     /**
-     * Loads all properties from the provided resource file.
+     * Returns a cached Properties instance for the given resource path, loading
+     * from the classpath on first access.
+     *
+     * @param resourcePath classpath-relative resource path
+     * @return cached Properties object
+     */
+    private static Properties loadProperties(String resourcePath) {
+        return CACHE.computeIfAbsent(resourcePath, PropertyUtils::loadFromClasspath);
+    }
+
+    /**
+     * Loads properties from the classpath. Called at most once per resource path.
      *
      * @param resourcePath classpath-relative resource path
      * @return loaded Properties object
      */
-    private static Properties loadProperties(String resourcePath) {
+    private static Properties loadFromClasspath(String resourcePath) {
         Properties properties = new Properties();
 
         try (InputStream inputStream = PropertyUtils.class.getClassLoader().getResourceAsStream(resourcePath)) {

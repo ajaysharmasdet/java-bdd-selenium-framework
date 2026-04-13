@@ -5,6 +5,8 @@ import com.enterprise.automation.framework.waits.WaitManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reusable wrapper class for common element-level actions.
@@ -17,12 +19,15 @@ import org.openqa.selenium.WebElement;
  */
 public class ElementActions {
 
+    private static final Logger log = LoggerFactory.getLogger(ElementActions.class);
+
     /**
      * Clicks an element after waiting for it to become clickable.
      *
      * @param locator element locator
      */
     public void click(By locator) {
+        log.debug("Clicking element: {}", locator);
         WaitManager.waitForElementToBeClickable(locator).click();
     }
 
@@ -33,6 +38,7 @@ public class ElementActions {
      * @param value   value to enter
      */
     public void type(By locator, String value) {
+        log.debug("Typing '{}' into element: {}", value, locator);
         WebElement element = WaitManager.waitForVisibility(locator);
         element.clear();
         element.sendKeys(value);
@@ -45,6 +51,7 @@ public class ElementActions {
      * @return element text
      */
     public String getText(By locator) {
+        log.debug("Getting text from element: {}", locator);
         return WaitManager.waitForVisibility(locator).getText();
     }
 
