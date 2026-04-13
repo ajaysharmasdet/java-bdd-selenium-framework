@@ -3,6 +3,11 @@ allure-results/
 allure-report/
 *.log
 *.tmp
+*.iml
 .DS_Store
 .idea/
 .vscode/
+.env
+logs/
+screenshots/
+test-output/
